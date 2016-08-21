@@ -6,22 +6,13 @@
 package com.github.somi92.auth.boot;
 
 import com.github.somi92.auth.config.EKlubServletCustomizer;
-import java.util.EnumSet;
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Conventions;
 
 /**
  *
@@ -32,10 +23,10 @@ import org.springframework.core.Conventions;
 @EnableAutoConfiguration
 public class EKlubAuthServerApplication extends SpringBootServletInitializer {
 
-//    @Bean
-//    public EmbeddedServletContainerCustomizer containerCustomizer() {
-//        return new EKlubServletCustomizer();
-//    }
+    @Bean
+    public EmbeddedServletContainerCustomizer containerCustomizer() {
+        return new EKlubServletCustomizer();
+    }
     
 //    @Override
 //    public void onStartup(ServletContext servletContext) throws ServletException {
