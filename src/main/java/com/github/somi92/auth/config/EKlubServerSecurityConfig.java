@@ -44,7 +44,7 @@ public class EKlubServerSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/login").permitAll()
+            .antMatchers("/login", "/oauth/confirm_access", "/oauth/check_token").permitAll()
             .anyRequest().authenticated()
             .and()
             .formLogin().permitAll();
