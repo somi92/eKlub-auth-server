@@ -22,7 +22,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 /**
@@ -32,10 +31,10 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 @Configuration
 @EnableWebSecurity
 public class EKlubServerSecurityConfig extends WebSecurityConfigurerAdapter {
-    
+
     @Autowired
     private DataSource dataSource;
-    
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
@@ -44,20 +43,20 @@ public class EKlubServerSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usersByUsernameQuery(getUserQuery())
                 .authoritiesByUsernameQuery(getAuthoritiesQuery());
     }
-    
+
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-    
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterAfter(new Filter() {
-            
+
             @Override
             public void init(FilterConfig fc) throws ServletException { }
-            
+
             @Override
             public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
                 HttpServletResponse response = (HttpServletResponse) res;
@@ -67,7 +66,7 @@ public class EKlubServerSecurityConfig extends WebSecurityConfigurerAdapter {
                 response.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization");
                 chain.doFilter(req, res);
             }
-            
+
             @Override
             public void destroy() { }
         }, AbstractPreAuthenticatedProcessingFilter.class);
@@ -77,15 +76,15 @@ public class EKlubServerSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().permitAll();
     }
-    
+
     private String getUserQuery() {
         return "SELECT username, `password`, enabled FROM Employee WHERE username = ?";
     }
-    
+
     private String getAuthoritiesQuery() {
         return "SELECT username, scopeName AS authority \n"
                 + "FROM Employee E JOIN EmployeeScope ES ON (E.idEmployee = ES.idEmployee) \n"
                 + "	JOIN oauth_eklub_scope S ON (ES.idScope = S.idScope) \n"
                 + "WHERE username = ?";
-    }    
+    }
 }

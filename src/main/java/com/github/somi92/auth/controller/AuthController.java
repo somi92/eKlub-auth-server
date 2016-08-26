@@ -5,6 +5,9 @@
  */
 package com.github.somi92.auth.controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,25 +30,32 @@ import org.springframework.web.bind.annotation.RestController;
 @Component
 @RestController
 public class AuthController {
-    
+
     @Autowired
     private TokenStore tokenStore;
-    
+
     @RequestMapping("/logout")
     public ResponseEntity logout(HttpServletRequest request, HttpServletResponse response) {
-        String authHeader = request.getHeader("Authorization");
-        if(authHeader != null) {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if(auth != null) {
-                new SecurityContextLogoutHandler().logout(request, response, auth);
-                SecurityContextHolder.getContext().setAuthentication(null);
+
+        try {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null) {
+                request.getSession().invalidate();
+                request.logout();
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null) {
+                    new SecurityContextLogoutHandler().logout(request, response, auth);
+                    SecurityContextHolder.getContext().setAuthentication(null);
+                }
+                String tokenValue = authHeader.replace("Bearer", "").trim();
+                OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
+                tokenStore.removeAccessToken(accessToken);
+                return new ResponseEntity("{ \"status\": " + HttpStatus.OK + " }", HttpStatus.OK);
+            } else {
+                return new ResponseEntity("{ \"status\": " + HttpStatus.BAD_REQUEST + " }", HttpStatus.BAD_REQUEST);
             }
-            request.getSession().invalidate();
-            String tokenValue = authHeader.replace("Bearer", "").trim();
-            OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
-            tokenStore.removeAccessToken(accessToken);
-            return new ResponseEntity("{ \"status\": " + HttpStatus.OK + " }", HttpStatus.OK);
-        } else {
+        } catch (ServletException ex) {
+            ex.printStackTrace();
             return new ResponseEntity("{ \"status\": " + HttpStatus.BAD_REQUEST + " }", HttpStatus.BAD_REQUEST);
         }
     }
