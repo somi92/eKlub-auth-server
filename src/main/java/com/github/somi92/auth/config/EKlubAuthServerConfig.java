@@ -38,7 +38,7 @@ public class EKlubAuthServerConfig extends AuthorizationServerConfigurerAdapter 
 
     @Value("src/main/resources/config/schema.sql")
     private Resource schemaScript;
-    
+
     @Autowired
     private DataSource dataSource;
 
@@ -49,34 +49,33 @@ public class EKlubAuthServerConfig extends AuthorizationServerConfigurerAdapter 
     }
 
     @Override
-    public void configure(ClientDetailsServiceConfigurer clients) 
-      throws Exception {
+    public void configure(ClientDetailsServiceConfigurer clients)
+            throws Exception {
         clients.jdbc(dataSource);
-//               .withClient("sampleClientId")
-//               .authorizedGrantTypes("implicit")
-//               .scopes("read", "write")
-//               .autoApprove(true)
-//               .and()
-//               .withClient("clientIdPassword")
-//               .secret("secret")
-//               .authorizedGrantTypes(
-//                 "password","authorization_code", "refresh_token")
-//               .scopes("read");
+//                .withClient("eKlubWebClient4WQvUNlj7gBiu998yJtCO2kigYNZI4yJ")
+//                .authorizedGrantTypes("implicit")
+//                .scopes("global")
+//                .autoApprove(true)
+//                .and()
+//                .withClient("eKlubMobileClient4vY6OMfvNC4HKtAb8Lr4eT7pKsyGI")
+//                .authorizedGrantTypes("implicit")
+//                .scopes("mobile")
+//                .autoApprove(true);
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) 
-      throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints)
+            throws Exception {
         endpoints
-          .tokenStore(tokenStore())
-          .authenticationManager(authenticationManager);
+                .tokenStore(tokenStore())
+                .authenticationManager(authenticationManager);
     }
 
     @Bean
     public TokenStore tokenStore() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            
+
             return new JdbcTokenStore(dataSource);
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();

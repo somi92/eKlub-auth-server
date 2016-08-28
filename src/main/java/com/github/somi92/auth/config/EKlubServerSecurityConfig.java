@@ -82,9 +82,9 @@ public class EKlubServerSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private String getAuthoritiesQuery() {
-        return "SELECT username, scopeName AS authority \n"
-                + "FROM Employee E JOIN EmployeeScope ES ON (E.idEmployee = ES.idEmployee) \n"
-                + "	JOIN oauth_eklub_scope S ON (ES.idScope = S.idScope) \n"
+        return "SELECT username, authorityName AS authority \n"
+                + "FROM Employee E JOIN EmployeeAuthority EA ON (E.idEmployee = EA.idEmployee) \n"
+                + "	JOIN oauth_eklub_authority A ON (EA.idAuthority = A.idAuthority) \n"
                 + "WHERE username = ?";
     }
 }
